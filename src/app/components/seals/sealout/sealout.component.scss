@@ -1,0 +1,18 @@
+.form-inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+  }
+
+  .ng-select {
+    flex: 1;
+    max-width: 100%;
+  }
+  // .ng-select .ng-select-container {
+  //   min-height: 50px;
+  // }
+
+  // .ng-select.ng-select-single .ng-select-container {
+  //   height: 50px;
+  // }

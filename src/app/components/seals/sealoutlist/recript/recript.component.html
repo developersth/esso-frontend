@@ -1,0 +1,79 @@
+<div class="modal-header bg-info">
+    <h4 class="modal-title text-lg-left">รายงานการจ่ายซีล</h4>
+    <button type="button" class="btn btn-danger" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+      x
+    </button>
+  </div>
+    <div class="modal-body sealin-modal">
+      <div class="container">
+        <!-- <iframe [src]="pdfUrl"></iframe> -->
+        <div id="slip">
+          <img width="90px"  src="../../../../assets/img/logo-esso.png" alt="Logo">
+          <div class="header">
+            <p class="centered">
+              <span style="font-size: large;">ใบจ่ายซีล</span>
+              <br><span style="font-size: larger;">คลังน้ำมันเอสโซ่ศรีราชา</span>
+            </p>
+            <div>
+              <br>รหัสออเดอร์ : {{data['_id']}}
+              <br>ทะเบียนรถ  : {{data['truckLicense']}}
+              <br>วันที่      : {{data['createAtStr']}}
+            </div>
+          </div>
+          <br>
+          <p style="font-size: larger;">รายละเอียดข้อมูลซีล</p>
+          <table class="table table-bordered table-strip">
+            <thead>
+              <tr>
+                <th>ลำดับ</th>
+                <th>หมายเลขซีล</th>
+                <th>แพ็ค</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of data['sealItem'];let i = index">
+                <th scope="row">{{i+1}}</th>
+                <td class="description">
+                  <p *ngFor="let sealNoItem of item['sealNoItem']">
+                    {{sealNoItem.sealNo}}
+                  </p>
+                </td>
+                <td class="pack">{{item.pack}}</td>
+              </tr>
+              <tr>
+                <td class="item"></td>
+                <td class="description">รวมทั้งหมด</td>
+                <td class="pack">{{ data['sealTotal'] }} ตัว</td>
+              </tr>
+              <tr *ngIf="data['sealItemExtra']">
+                <td colspan="3">ซีลประเภทพิเศษ</td>
+              </tr>
+              <tr *ngFor="let item of data['sealItemExtra'];let i = index">
+                <th scope="row">{{i+1}}</th>
+                <td class="description">
+                  <p *ngFor="let sealNoItem of item['sealNoItem']">
+                    {{sealNoItem.sealNo}}
+                  </p>
+                </td>
+                <td class="pack">{{item.pack}}</td>
+              </tr>
+            </tbody>
+            <tr *ngIf="data['sealItemExtra']">
+              <td class="item"></td>
+              <td class="sealno">รวมทั้งหมด</td>
+              <td class="pack">{{ data['sealTotalExtra'] }} ตัว</td>
+            </tr>
+          </table>
+          <p class="centered">
+           ผู้ตรวจสอบ ...............................................
+           <br>***โปรดตรวจสอบความถูกต้อง***
+           <br>หากข้อมูลของท่านผิดพลาดกรุณาติดต่อเจ้าหน้าที่
+           <br>วันเวลาที่พิมพ์ : {{getDatetimeNow() | date: 'dd/MM/yyyy HH:mm'}}
+          </p>
+        </div>
+      </div>
+    <div class="modal-footer seal-modal-footer">
+      <button class="btn btn-danger" (click)="activeModal.dismiss('Cross click')">ยกเลิก</button>
+      <button  class="btn btn-primary btn-print" (click)="printSlip()">พิมพ์</button>
+    </div>
+

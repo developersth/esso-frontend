@@ -1,0 +1,156 @@
+<section id="seal-cart">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-danger layout-dark">
+          <div class="row justify-content-between">
+            <div class="col-10">
+              <div class="content-header" style="color: white;">รายการจ่ายซีล</div>
+            </div>
+            <div class="col-2">
+              <div class="my-1">
+                <button type="button" routerLink="/seals/sealout" class="btn btn-info mr-2">
+                  <span class="d-flex align-items-center">
+                    <i class="ft-plus mr-1"></i>
+                    <span>สร้างการจ่ายซีล</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+            <div class="form-row mb-2">
+              <div class="form-group col-md-2">
+                <label>แสดง:</label>
+                <select class="form-control" [(ngModel)]="pageSize">
+                  <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
+                </select>
+              </div>
+              <div class="form-group col-md-3">
+                <label> ฟิลเตอร์</label>
+                <fieldset>
+                  <div class="input-group">
+                    <input type="text" class="form-control"  [(ngModel)]="searchTerm" placeholder="ค้นหาข้อมูลในตาราง">
+                    <div class="input-group-append">
+                      <button class="btn btn-danger" (click)="clearTextSearch()">
+                        <i class="ft ft-x-square"></i>
+                      </button>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="form-group col-md-3">
+                <label for="form-action-3">จากวันที่</label>
+                <div class="form-inline">
+                  <div class="input-group" style="width: 100%;">
+                    <input class="form-control" readonly (click)="dpStart.toggle()" placeholder="dd-mm-yyyy" name="dp"
+                      [(ngModel)]="dtStart" ngbDatepicker [dayTemplate]="customDay" [markDisabled]="isDisabled"
+                      #dpStart="ngbDatepicker">
+                    <div class="input-group-append">
+                      <div class="input-group-text" (click)="dpStart.toggle()">
+                        <i class="ft ft-calendar" style="cursor: pointer;"></i>
+                      </div>
+                    </div>
+                    <ng-template #customDay let-date="date" let-currentMonth="currentMonth" let-selected="selected"
+                      let-disabled="disabled">
+                      <span class="custom-day" [class.weekend]="isWeekend(date)" [class.bg-primary]="selected"
+                        [class.hidden]="date.month !== currentMonth" [class.text-muted]="disabled">
+                        {{ date.day }}
+                      </span>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <label for="form-action-4">ถึงวันที่</label>
+                <div class="form-inline">
+                  <div class="input-group" style="width: 100%;">
+                    <input class="form-control" readonly (click)="dpEnd.toggle()" placeholder="dd-mm-yyyy" name="dp"
+                      [(ngModel)]="dtEnd" ngbDatepicker [dayTemplate]="customDay" [markDisabled]="isDisabled"
+                      #dpEnd="ngbDatepicker">
+                    <div class="input-group-append">
+                      <div class="input-group-text" (click)="dpEnd.toggle()">
+                        <i class="ft ft-calendar" style="cursor: pointer;"></i>
+                      </div>
+                      <button (click)="getSeal()" class="btn btn-primary">ค้นหา </button>
+                    </div>
+                    <ng-template #customDay let-date="date" let-currentMonth="currentMonth" let-selected="selected"
+                      let-disabled="disabled">
+                      <span class="custom-day" [class.weekend]="isWeekend(date)" [class.bg-primary]="selected"
+                        [class.hidden]="date.month !== currentMonth" [class.text-muted]="disabled">
+                        {{ date.day }}
+                      </span>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="table-responsive">
+              <table class="table table-bordered table-strip table-hover">
+                <thead>
+                  <tr>
+                    <th>
+                      <input type="checkbox" [(ngModel)]="checkedAll" (change)="checkAllItems()">
+                    </th>
+                    <th>รหัส</th>
+                    <th>หมายเลขซีล</th>
+                    <th>ซีลพิเศษ</th>
+                    <th>จำนวนซีล</th>
+                    <th>ทะเบียนรถ</th>
+                    <th>วันที่/เวลา</th>
+                    <th>#</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of filterItems | paginate: { itemsPerPage: pageSize, currentPage: currentPage }">
+                    <td>
+                      <ng-container>
+                        <input type="checkbox" [(ngModel)]="item.checked">
+                      </ng-container>
+                    </td>
+                    <td>{{ item._id }}</td>
+                    <td>
+                      <div *ngFor="let sealItem of item['sealItem']">
+                        <p>{{sealItem['sealBetween']}} <span class="badge">{{sealItem['pack']}}</span></p>
+                        <!-- <div *ngFor="let item of sealItem['sealNoItem']">
+                          {{item.sealNo}}
+                        </div> -->
+                      </div>
+                    </td>
+                    <td>
+                      <div *ngFor="let sealItemExtra of item['sealItemExtra']">
+                        <p>{{ sealItemExtra['sealNo']}} </p>
+                      </div>
+                    </td>
+                    <td>{{ item.sealTotal }}</td>
+                    <td>{{ item.truckLicense }}</td>
+                    <td>{{ item.createAtStr }}</td>
+                    <td>
+                      <button class="btn btn-info" (click)="printSlip(item)"><i class="ft ft-printer"></i></button>
+                      <button class="btn btn-success" routerLink="/seals/sealout/{{item._id}}"><i class="ft ft-edit"></i></button>
+                      <button (click)="deleteData(item._id)" class="btn btn-danger"><i class="ft ft-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="sealItem.length==0" class="text-center">
+                    <td colspan="8">ไม่พบข้อมูล</td>
+                  </tr>
+              </table>
+              <!-- ใช้ pagination-controls directive ในการแสดง control ของ pagination -->
+              <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+              <!-- <ul>
+              <div *ngFor="let item of Seal" >
+                <li *ngIf="item.checked">{{item.id}}</li>
+              </div>
+            </ul> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--Shopping cart ends-->

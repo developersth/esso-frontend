@@ -1,0 +1,152 @@
+<!-- Basic Form & Hidden Label Layouts starts -->
+<section id="basic-hidden-label-form-layouts">
+  <div class="row match-height">
+    <!-- Basic Form starts -->
+    <div class="col-lg-12 col-12">
+      <div class="card">
+        <div class="card-header bg-info layout-dark">
+          <div class="row justify-content-between">
+            <div class="col-8">
+              <div class="content-header" style="color: white;">จ่ายซีล</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+            <div class="form-row">
+              <div class="col-md-6 col-8">
+                <label class="font-medium-2">ทะเบียนรถ</label>
+                <div class="input-group mb-2">
+                  <div class="input-group-prepend">
+                    <button class="btn btn-secondary" type="button"><i class="ft ft-truck"></i></button>
+                  </div>
+
+                  <ng-select class="font-medium-2" [items]="trucks" [virtualScroll]="true" bindLabel="truckIdHead"
+                    (change)="selectTruckSeal()" bindValue="_id" [(ngModel)]="txtTruckNo" placeholder="เลือกทะเบียนรถ">
+                    <ng-template ng-option-tmp let-item="item" let-index="index">
+                      {{item.truckIdHead}} / {{item.truckIdTail}}
+                    </ng-template>
+                    <ng-template ng-label-tmp let-item="item" let-index="index">
+                      {{item.truckIdHead}} / {{item.truckIdTail}}
+                    </ng-template>
+                  </ng-select>
+
+                  <div class="input-group-prepend">
+                    <button class="btn btn-info" type="button" (click)="addTruck()"><i class="fa fa-plus"></i></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-12">
+                <div class="form-group mb-2">
+                  <label class="font-medium-2">จำนวนซีล</label>
+                  <input type="number" [(ngModel)]="txtSealTotal" class="form-control font-medium-2"
+                    placeholder="จำนวนซีล">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group mb-2">
+                  <label class="font-medium-2">จำนวนซีลพิเศษ</label>
+                  <input type="number" [(ngModel)]="txtSealExtraTotal" #inputEl (input)="genSealExtra(inputEl.value)"
+                    id="basic-form-2" class="form-control font-medium-2" placeholder="จำนวนซีลพิเศษ">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <label class="font-medium-2">คิวอาร์โค้ด</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <button class="btn btn-secondary" type="button"><i class="ft ft-file-text"></i></button>
+                  </div>
+                  <ng-select class="font-medium-2" [items]="itemSealNo" (change)="selectEvent()" [virtualScroll]="true"
+                    [clearable]="true" bindLabel="sealBetween" bindValue="_id" placeholder="ค้นหา แสกน QR CODE"
+                    [(ngModel)]="selectedOptionsQRCode">
+                    <ng-template ng-option-tmp let-item="item" let-index="index">
+                      {{item.sealBetween}} [แพ็ค {{item.pack}}]
+                    </ng-template>
+                  </ng-select>
+
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+
+            </div>
+            <div class="form-row">
+              <div *ngFor="let item of sealNoExt;let idx = index" class="col-md-6 col-12">
+                <div class="form-group mb-2">
+                  <label for="basic-form-3">หมายเลขซีลพิเศษ #{{idx+1}} </label>
+                  <input type="text" id="basic-form-3" [(ngModel)]="item.sealNo" class="form-control">
+                </div>
+              </div>
+
+            </div>
+            <table class="table table-bordered table-hover table-strip">
+              <ngx-spinner></ngx-spinner>
+              <thead>
+                <tr>
+                  <th scope="col">ลำดับ</th>
+                  <th scope="col">หมายเลยซีล</th>
+                  <th scope="col">ชนิดแพ็ค</th>
+                  <th scope="col">ชนิดซีล</th>
+                  <th scope="col">#</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of itemSealOutList;let idx = index">
+                  <td class="font-medium-3">{{idx+1}}</td>
+                  <td class="font-medium-3">
+                    {{item.sealBetween}} <button class="btn btn-sm btn-info" (click)="editSealNo(item.sealNoItem)"><i class="fas ft-edit"></i></button>
+                    <button *ngIf="sealNoItem.length!=0" class="btn btn-sm btn-danger" (click)="clearSealNoItem()"><i class="fa fa-ban"></i></button>
+                  </td>
+                  <td class="font-medium-3">{{item.pack}}</td>
+                  <td class="font-medium-3">{{item.type}}</td>
+                  <td class="font-medium-3">
+                    <btn class="btn btn-danger" (click)="removeItem(item)"><i class="fa fa-trash"></i></btn>
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+            <tr>
+              <td class="font-medium-2">จำนวนซีลรวมทั้งหมด</td>
+              <td class="font-medium-2"> {{subTotalSeal()}} ตัว</td>
+            </tr>
+            <table *ngIf="sealNoItem.length!=0" class="table">
+              <thead>
+                <tr>
+                  <th scope="col">ลำดับ</th>
+                  <th scope="col">หมายเลยซีล</th>
+                  <th scope="col">#</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of sealNoItem;let idx = index">
+                  <td class="font-medium-3">{{idx+1}}</td>
+                  <td class="font-medium-3">
+                    <input type="text" [value]="item.sealNo" readonly  class="form-control font-medium-2"
+                    placeholder="หมายเลขซีล">
+                  </td>
+                  <td class="font-medium-3">
+                    <btn class="btn btn-danger" (click)="removeItem(item)"><i class="fa fa-trash"></i></btn>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="row justify-content-between">
+              <div class="col-lg-9 col-md-6">
+              </div>
+              <div class="col-lg-3 col-md-6">
+                <button type="button" (click)="onSubmit()" class="btn btn-primary btn-lg mr-2"><i
+                    class="ft-check-square mr-1"></i>บันทึกข้อมูล</button>
+                <button type="button" class="btn btn-secondary btn-lg"><i class="ft-x mr-1"></i>ยกเลิก</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Basic Form ends -->
+  </div>
+</section>
+<!-- Basic Form & Hidden Label Layouts ends -->

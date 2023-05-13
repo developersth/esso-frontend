@@ -1,0 +1,34 @@
+<div class="modal-header bg-info">
+  <h4 class="modal-title text-lg-left">ข้อมูลผู้ใช้งาน # {{ id != '' ? 'Edit' : 'Add'}} </h4>
+  <button type="button" class="btn btn-danger" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    x
+  </button>
+</div>
+<div class="modal-body sealin-modal">
+  <form [formGroup]="truckForm" (ngSubmit)="onSubmit()">
+  <div class="container">
+    <div class="form-row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label for="name">ทะเบียนหัว:</label>
+          <input type="text" id="name" required formControlName="truckIdHead" class="form-control" placeholder="ชบ72-4541">
+        </div>
+        <div class="form-group">
+          <label for="truckIdTail">ทะเบียนหาง:</label>
+          <input type="text" id="truckIdTail" formControlName="truckIdTail" class="form-control" placeholder="ชบ72-4544">
+        </div>
+        <div class="form-group">
+          <label for="fixSeal">จำนวนซีล:</label>
+          <input type="number" id="fixSeal" formControlName="fixSeal" class="form-control" placeholder="0">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer seal-modal-footer">
+      <!-- <button class="btn btn-danger"  aria-label="Close" (click)="activeModal.dismiss('Cross click')">ยกเลิก</button> -->
+      <button type="submit"  class="btn btn-primary btn-save">
+        {{ id != '' ? 'แก้ไขข้อมูล' : 'เพิ่มข้อมูล'}}
+      </button>
+    </div>
+    </div>
+  </form>
+</div>

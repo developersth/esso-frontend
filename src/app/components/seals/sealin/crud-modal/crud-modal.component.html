@@ -1,0 +1,61 @@
+<div class="modal-header bg-info">
+  <h4 class="modal-title text-lg-left">ข้อมูลซีล # {{ id != 0 ? 'Edit' : 'Add'}} </h4>
+  <button type="button" class="btn btn-danger" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    x
+  </button>
+</div>
+  <div class="modal-body sealin-modal">
+    <div class="container">
+      <div class="form-row">
+        <div class="form-group col-md-3">
+          <label for="inputseal" class="text-lg-left">แพ็ค</label>
+            <select class="form-control" [(ngModel)]="cbSealPack">
+              <option selected value="1"> แพ็ค [3,4,5] </option>
+              <option  value="2"> แพ็ค [3] </option>
+            </select>
+        </div>
+          <div class="form-group col-md-3">
+            <label for="inputseal" class="text-lg-left">จำนวนซีล</label>
+                <input type="number"  maxlength="5" [(ngModel)]="sealTotal" class="form-control" placeholder="ใส่จำนวนซีลที่ต้องการ">
+          </div>
+          <div class="form-group col-md-6">
+            <label for="inputsealStart" class="text-lg-left ">หมายเลขซีลเริ่มต้น</label>
+            <div class="form-inline">
+                <div class="input-group">
+                  <input type="number" class="form-control" placeholder="เช่น 88001" [(ngModel)]="sealStartNo" >
+                  <div class="input-group-append">
+                    <button (click)="calculateSeal()" class="btn btn-info">คำนวณซีล</button>
+                  </div>
+                </div>
+            </div>
+          </div>
+      </div>
+      <table class="table table-bordered able-hover">
+        <ngx-spinner></ngx-spinner>
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">หมายเลยซีล</th>
+            <th scope="col">ชนิดแพ็ค</th>
+            <th scope="col">#</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of data;let i = index">
+            <th scope="row">{{i+1}}</th>
+            <td>{{item.sealBetween}}</td>
+            <td>{{item.pack}}</td>
+            <td style="width: 10%;"><button class="btn btn-danger" (click)="removeData(item)"><i class="ft ft-trash"></i></button></td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  <div class="modal-footer seal-modal-footer">
+    <button class="btn btn-danger" (click)="activeModal.dismiss('Cross click')">ยกเลิก</button>
+    <button (click)="submitForm()" class="btn btn-primary btn-save">
+      {{ id != 0 ? 'แก้ไขข้อมูล' : 'เพิ่มข้อมูล'}}
+    </button>
+  </div>
+  </div>
+

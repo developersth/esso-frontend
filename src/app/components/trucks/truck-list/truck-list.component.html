@@ -1,0 +1,58 @@
+<section id="users">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="row justify-content-between">
+          <div class="col-md-10">
+            <div class="content-header">ข้อมูลรถบรรทุก</div>
+          </div>
+          <div class="col-2">
+            <div class="my-1">
+              <button type="button" (click)="addData()" class="btn btn-info mr-2">
+                <span class="d-flex align-items-center">
+                  <i class="ft-plus mr-1"></i>
+                  <span>สร้าง</span>
+                </span>
+              </button>
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-strip">
+                <thead>
+                  <tr>
+                    <th>รหัส</th>
+                    <th>ทะเบียนหัว</th>
+                    <th>ทะเบียนหาง</th>
+                    <th>จำนวนซีล</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of truck">
+                    <td>{{ item._id }}</td>
+                    <td>{{ item.truckIdHead }}</td>
+                    <td>{{ item.truckIdTail }}</td>
+                    <td>{{ item.fixSeal }}</td>
+                    <td>
+                      <a class="btn btn-primary" (click)="editData(item)">
+                        <i class="fa fa-pencil">แก้ไข</i>
+                      </a>
+                      <button  class="btn btn-danger" (click)="deleteTruck(item._id)">
+                        <i class="fa fa-trash">ลบ</i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

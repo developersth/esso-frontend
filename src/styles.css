@@ -1,0 +1,9 @@
+@font-face {
+  font-family: 'kanit';
+  src: url('/assets/fonts/kanit/Kanit-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+body {
+  font-family: 'kanit', sans-serif;
+}
