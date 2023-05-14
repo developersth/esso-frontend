@@ -29,9 +29,9 @@ export class TruckModalComponent implements OnInit {
     public toastr: ToastrService,
   ) {
     this.truckForm = this.formBuilder.group({
-      truckIdHead: ["", Validators.required],
-      truckIdTail: [""],
-      fixSeal: ["0"]
+      truckHead: ["", Validators.required],
+      truckTail: [""],
+      sealTotal: [0]
     });
   }
   ngOnInit(): void {
@@ -39,9 +39,9 @@ export class TruckModalComponent implements OnInit {
   }
   private buildItemForm(item) {
     this.truckForm = this.formBuilder.group({
-      truckIdHead: [item.truckIdHead || "", Validators.required],
-      truckIdTail: [item.truckIdTail||""],
-      fixSeal: [item.fixSeal||""]
+      truckHead: [item.truckHead || "", Validators.required],
+      truckTail: [item.truckTail||""],
+      sealTotal: [item.sealTotal||""]
     });
   }
   getTrimmedValues(formGroup: FormGroup): any {
@@ -58,17 +58,16 @@ export class TruckModalComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log("dfdf");
-    if(this.truckForm.value.truckIdHead===''){
+    if(this.truckForm.value.truckHead===''){
       this.toastr.warning("กรุณาระบุทะเบียนหัว ด้วยครับ");
       return;
     }
-    if(this.truckForm.value.truckIdHead===this.truckForm.value.truckIdTail){
+    if(this.truckForm.value.truckHead===this.truckForm.value.truckTail){
       this.toastr.warning("หมายเลขทะเบียนหัวกับทะเบียนหางเหมือนกัน");
       return;
     }
-    this.truckForm.value.truckIdHead = this.truckForm.value.truckIdHead.trim()
-    this.truckForm.value.truckIdTail = this.truckForm.value.truckIdTail.trim()
+    this.truckForm.value.truckHead = this.truckForm.value.truckHead.trim()
+    this.truckForm.value.truckTail = this.truckForm.value.truckTail.trim()
     this.activeModal.close(this.truckForm.value);
   }
 }

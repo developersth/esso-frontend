@@ -26,6 +26,7 @@ export class RestService {
   private sealItemUrl = `${this.apiUrl}/SealItem`;
   private sealOutUrl = `${this.apiUrl}/sealout`;
   private userUrl = `${this.apiUrl}/user`;
+  private truckUrl = `${this.apiUrl}/truck`;
 
   //----------------------------------------------------------------
   getUsers(): Observable<User[]> {
@@ -44,20 +45,20 @@ export class RestService {
     return this.http.delete(`${this.userUrl}/user/${id}`);
   }
   //----------------------------------------------------------------
-  getTrucks(): Observable<Truck[]> {
-    return this.http.get<Truck[]>(this.apiUrl+'/trucks');
+  getTruck(): Observable<Truck[]> {
+    return this.http.get<Truck[]>(this.truckUrl);
   }
-  getTruck(id: string): Observable<Truck> {
-    return this.http.get<Truck>(`${this.apiUrl}/trucks/${id}`);
+  getTruckById(id: string): Observable<Truck[]> {
+    return this.http.get<Truck[]>(`${this.truckUrl}/${id}`);
   }
   addTruck(truck: Truck): Observable<Response> {
-    return this.http.post<Response>(`${this.apiUrl}/trucks`, truck);
+    return this.http.post<Response>(`${this.truckUrl}`, truck);
   }
   updateTruck(id:string,truck:Truck): Observable<Truck> {
-    return this.http.put<Truck>(`${this.apiUrl}/trucks/${id}`, truck);
+    return this.http.put<Truck>(`${this.truckUrl}/${id}`, truck);
   }
   deleteTruck(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/trucks/${id}`);
+    return this.http.delete(`${this.truckUrl}/${id}`);
   }
   //----------------------------------------------------------------
   addSeal(items: any): Observable<any> {
@@ -68,8 +69,8 @@ export class RestService {
     const body = { startDate: startDate, endDate: endDate };
     return this.http.get<any[]>(`${this.sealInUrl}?pIsActive=${isActive}&pColumnSearch=${columnSearch}&searchTerm=${searchTerm}&pStartDate=${startDate}&pEndDate=${endDate}`,{headers});
   }
-  getSealNoQRCode(): Observable<any> {
-    return this.http.get<any[]>(`${this.sealInUrl}/GetSealNo`, { headers });
+  getSeaBetWeen(): Observable<any> {
+    return this.http.get<any[]>(`${this.sealInUrl}/GetSealBetWeen`, { headers });
   }
   deleteSeal(id: string): Observable<any> {
     return this.http.delete<any[]>(`${this.sealInUrl}/${id}`, { headers });

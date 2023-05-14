@@ -35,15 +35,15 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let item of truck">
-                    <td>{{ item._id }}</td>
-                    <td>{{ item.truckIdHead }}</td>
-                    <td>{{ item.truckIdTail }}</td>
-                    <td>{{ item.fixSeal }}</td>
+                    <td>{{ item.truckId }}</td>
+                    <td>{{ item.truckHead }}</td>
+                    <td>{{ item.truckTail }}</td>
+                    <td>{{ item.sealTotal }}</td>
                     <td>
                       <a class="btn btn-primary" (click)="editData(item)">
                         <i class="fa fa-pencil">แก้ไข</i>
                       </a>
-                      <button  class="btn btn-danger" (click)="deleteTruck(item._id)">
+                      <button  class="btn btn-danger" (click)="deleteTruck(item.truckId)">
                         <i class="fa fa-trash">ลบ</i>
                       </button>
                     </td>

@@ -11,7 +11,7 @@ import { RestService } from "../../../services/rest.service";
 import { ToastrService } from "ngx-toastr";
 import { th } from "date-fns/locale";
 import { NgxSpinnerService } from "ngx-spinner";
-import {ActivatedRoute, Router } from "@angular/router"
+import { ActivatedRoute, Router } from "@angular/router";
 import {
   NgbDateStruct,
   NgbModal,
@@ -22,6 +22,7 @@ import { RecriptComponent } from "../sealoutlist/recript/recript.component";
 import { TruckModalComponent } from "app/components/trucks/truck-modal/truck-modal.component";
 import * as swalFunctions from "../../../shared/services/sweetalert.service";
 import { NgOption } from "@ng-select/ng-select";
+import { Truck } from "app/models/truck.model";
 
 @Component({
   selector: "app-sealout",
@@ -34,7 +35,7 @@ import { NgOption } from "@ng-select/ng-select";
   encapsulation: ViewEncapsulation.None,
 })
 export class SealoutComponent implements OnInit {
-  getId:string;
+  getId: string;
   ngSelect: any;
   constructor(
     private router: Router,
@@ -44,41 +45,34 @@ export class SealoutComponent implements OnInit {
     private modalService: NgbModal,
     private activateRoute: ActivatedRoute
   ) {
-    this.getId = this.activateRoute.snapshot.paramMap.get('id')
+    this.getId = this.activateRoute.snapshot.paramMap.get("id");
   }
   swal = swalFunctions;
   keyword = "name";
   @Input() txtSealTotal: string = "0";
   @Input() txtSealExtraTotal: string = "0";
-  @Input() txtTruckNo: string;
+  @Input() txtTruckId: string;
   @Input() sealNoExt: any[] = [];
   @Input() sealItemExtra: any[] = [];
   selectedOptionsQRCode: any[] = [];
-  itemSealNo: any[] = [];
+  itemSealBetWeen: any[] = [];
   itemSealOutList: any[] = [];
-  trucks: any[] = [];
+  mTruck: Truck[];
   //seal no item
-  sealNoItem:any[] = [];
-  cities = [
-    { id: 1, name: "Vilnius" },
-    { id: 2, name: "Kaunas" },
-    { id: 3, name: "Pavilnys", disabled: true },
-    { id: 4, name: "Pabradė" },
-    { id: 5, name: "Klaipėda" },
-  ];
+  sealNoItem: any[] = [];
 
   clearSelectionQRCode() {
     this.selectedOptionsQRCode = [];
   }
-  getSealNo() {
-    this.service.getSealNoQRCode().subscribe((res: any) => {
-      this.itemSealNo = res;
+  getSeaBetWeen() {
+    this.service.getSeaBetWeen().subscribe((res: any) => {
+      this.itemSealBetWeen = res.result;
     });
   }
-  getTrucks() {
-    this.service.getTrucks().subscribe(
-      (trucks) => {
-        this.trucks = trucks;
+  getTruck() {
+    this.service.getTruck().subscribe(
+      (res: any) => {
+        this.mTruck = res.result;
       },
       (error) => {
         console.log(error);
@@ -105,16 +99,18 @@ export class SealoutComponent implements OnInit {
       for (let index = 0; index < vCount; index++) {
         this.sealNoExt.push({
           id: this.generator(),
-          sealNo:"",
+          sealNo: "",
         });
       }
     }
   }
-  selectTruckSeal(){
-    if(this.txtTruckNo){
-      const found = this.trucks.find(element => element._id === this.txtTruckNo);
-      if(found){
-        this.txtSealTotal = found.fixSeal;
+  selectTruckSeal() {
+    if (this.txtTruckId) {
+      const found = this.mTruck.find(
+        (element) => element.truckId === this.txtTruckId
+      );
+      if (found) {
+        this.txtSealTotal = found.sealTotal;
       }
     }
   }
@@ -132,22 +128,29 @@ export class SealoutComponent implements OnInit {
       return;
     }
     if (this.selectedOptionsQRCode) {
-      const result = this.itemSealNo.find((item) => item._id === id);
+      const result = this.itemSealBetWeen.find((item) => item.id === id);
       console.log(result);
       if (!this.isValidChkAddItemSeal(id, result.pack)) {
         return;
       }
       this.itemSealOutList.push({
-        id: result._id,
-        sealBetween:result.sealBetween,
-        sealNoItem: result.sealNoItem,
+        id: result.id,
+        sealBetween: result.sealBetween,
         pack: result.pack,
-        type: "ปกติ",
+        sealtypeName: "ปกติ",
       });
     } else {
       this.toastr.warning("กรุณาเลือก หมายเลขซีล/QR Code");
     }
     // do something with selected item
+  }
+  addListSealExtra() {
+    this.itemSealOutList.push({
+      id: 0,
+      sealBetween: "",
+      pack: 1,
+      sealtypeName: "พิเศษ",
+    });
   }
   removeItem(item: any) {
     let index = this.itemSealOutList.indexOf(item);
@@ -164,15 +167,15 @@ export class SealoutComponent implements OnInit {
     console.log("focused", e.value);
     // do something when input is focused
   }
-  onKeyDownQrcode(txt:string){
+  onKeyDownQrcode(txt: string) {
     console.log(txt);
-
   }
   subTotalSeal() {
     let total: number = 0;
     for (const key in this.itemSealOutList) {
-      if (this.itemSealOutList[key].pack)
+      if (this.itemSealOutList[key].pack) {
         total += parseInt(this.itemSealOutList[key].pack);
+      }
     }
     return total;
   }
@@ -185,16 +188,16 @@ export class SealoutComponent implements OnInit {
   private S4(): string {
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
   }
-  editSealNo(item:any){
-    if(item){
-      this.sealNoItem =[];
-      item.forEach(element => {
-        this.sealNoItem.push({sealNo:element.sealNo})
+  editSealNo(item: any) {
+    if (item) {
+      this.sealNoItem = [];
+      item.forEach((element) => {
+        this.sealNoItem.push({ sealNo: element.sealNo });
       });
     }
   }
-  clearSealNoItem(){
-    this.sealNoItem =[];
+  clearSealNoItem() {
+    this.sealNoItem = [];
   }
   validateData() {
     //check จำนวนซีล
@@ -202,16 +205,9 @@ export class SealoutComponent implements OnInit {
       this.toastr.warning("กรุณากรอก จำนวนซีล");
       return false;
     }
-    //check ซีลพิเศษ
-    if (parseInt(this.txtSealExtraTotal) > 0) {
-      const result = this.sealNoExt.find((item) => item.sealNo === "");
-      if (result) {
-        this.toastr.warning("กรุณากรอก หมายเลขซีลพิเศษ");
-        return false;
-      }
-    }
+
     //check ทะเบียรถ
-    if (!this.txtTruckNo) {
+    if (!this.txtTruckId) {
       this.toastr.warning("กรุณาเลือก ทะเบียนรถ");
       return false;
     }
@@ -221,18 +217,36 @@ export class SealoutComponent implements OnInit {
       return false;
     }
     //check count seal==txtSealTotal
-    if (this.subTotalSeal() !== parseInt(this.txtSealTotal)) {
+    //seal extra
+    let vCountExtra: number = 0;
+    const filterSealExtra = this.itemSealOutList.filter(
+      (obj) => obj.sealtypeName === "พิเศษ"
+    );
+    filterSealExtra.forEach((el) => {
+      vCountExtra = vCountExtra + el.pack;
+    });
+    if (this.subTotalSeal() !== parseInt(this.txtSealTotal + vCountExtra)) {
       this.toastr.warning("จำนวนซีลไม่เท่ากับจำนวนซีลรวม");
       return false;
     }
     //check sealExtra ซ้ำ
-    if (this.sealNoExt.length>1) {
-      let valueArr = this.sealNoExt.map(function (item) { return item.sealNo });
+    if (filterSealExtra.length > 0) {
+      let valueArr = filterSealExtra.map(function (item) {
+        return item.sealBetween;
+      });
       let isDuplicate = valueArr.some(function (item, idx) {
-        return valueArr.indexOf(item) != idx
+        return valueArr.indexOf(item) != idx;
       });
       if (isDuplicate) {
         this.toastr.warning("หมายเลขซีลพิเศษซ้ำกัน");
+        return false;
+      }
+    }
+    //check ซีลพิเศษ
+    if (filterSealExtra.length > 0) {
+      const result = filterSealExtra.find((item) => item.sealBetween === "");
+      if (result) {
+        this.toastr.warning("กรุณากรอก หมายเลขซีลพิเศษ");
         return false;
       }
     }
@@ -264,11 +278,14 @@ export class SealoutComponent implements OnInit {
         this.service.addTruck(result).subscribe(
           (res: any) => {
             this.spinner.hide();
-            if(res.success){
+            if (res.success) {
               this.swal.showDialog("success", res.message);
-              this.getTrucks();
-            }else{
-              this.swal.showDialog("warning", "เกิดข้อผิดพลาด : " + res.message);
+              this.getTruck();
+            } else {
+              this.swal.showDialog(
+                "warning",
+                "เกิดข้อผิดพลาด : " + res.message
+              );
             }
           },
           (error: any) => {
@@ -281,46 +298,35 @@ export class SealoutComponent implements OnInit {
         console.log(error);
       });
   }
-  bindData(){
-    if(this.getId){
+  bindData() {
+    if (this.getId) {
       this.service.getSealOutById(this.getId).subscribe((response: any) => {
         console.log(response);
-        this.txtSealTotal =response.sealTotal;
-        this.txtSealExtraTotal =response.sealTotalExtra;
-        this.txtTruckNo = response.truckId;
-        this.itemSealOutList =response.sealItem;
+        this.txtSealTotal = response.sealTotal;
+        this.txtSealExtraTotal = response.sealTotalExtra;
+        this.txtTruckId = response.truckId;
+        this.itemSealOutList = response.sealItem;
         this.sealNoExt = [];
-        if(response.sealItemExtra){
-          response.sealItemExtra.forEach(el => {
+        if (response.sealItemExtra) {
+          response.sealItemExtra.forEach((el) => {
             this.sealNoExt.push({
-              id:el.id,
-              sealNo:el.sealNoItem[0].sealNo
-            })
+              id: el.id,
+              sealNo: el.sealNoItem[0].sealNo,
+            });
           });
         }
       });
     }
   }
-  onSubmit(){
-    //แปลงซีลพิเศษในรูป
-    if (this.sealNoExt) {
-      this.sealNoExt.forEach(el => {
-        this.sealItemExtra.push({
-          id:this.generator(),
-          sealBetween:el.sealNo,
-          sealNoItem: [{sealNo:el.sealNo,isUsed:true}],
-          pack: 1,
-          type: "พิเศษ",
-      })
-      });
-    }
-    if(this.getId){
+  onSubmit() {
+    if (this.validateData() == false) return;
+    if (this.getId) {
       this.editData();
-    }else{
+    } else {
       this.addData();
     }
   }
-  editData(){
+  editData() {
     //validation before save
     if (!this.validateData()) return;
 
@@ -332,21 +338,21 @@ export class SealoutComponent implements OnInit {
       fullScreen: true,
     });
 
-    const result = this.trucks.find((item) => item._id === this.txtTruckNo);
+    const result = this.mTruck.find((item) => item.truckId === this.txtTruckId);
     const body = {
       sealTotal: this.txtSealTotal,
       sealTotalExtra: this.txtSealExtraTotal,
-      truckId: result._id,
-      truckLicense: `${result.truckIdHead}/${result.truckIdTail}`,
+      truckId: result.truckId,
+      truckName: `${result.truckHead}/${result.truckTail}`,
       sealItem: this.itemSealOutList,
       sealItemExtra: this.sealItemExtra,
     };
-    this.service.updateSealOut(this.getId,JSON.stringify(body)).subscribe(
+    this.service.updateSealOut(this.getId, JSON.stringify(body)).subscribe(
       (res: any) => {
         this.spinner.hide();
         this.swal.showDialog("success", "แก้ไขข้อมูลสำเร็จแล้ว");
         this.showRecript(res);
-        this.router.navigate(['/seals/sealoutlist']);
+        this.router.navigate(["/seals/sealoutlist"]);
       },
       (error: any) => {
         this.spinner.hide();
@@ -355,9 +361,6 @@ export class SealoutComponent implements OnInit {
     );
   }
   addData() {
-    //validation before save
-    if (!this.validateData()) return;
-
     this.spinner.show(undefined, {
       type: "ball-triangle-path",
       size: "medium",
@@ -366,21 +369,27 @@ export class SealoutComponent implements OnInit {
       fullScreen: true,
     });
 
-    const result = this.trucks.find((item) => item._id === this.txtTruckNo);
+    const result = this.mTruck.find((item) => item.truckId === this.txtTruckId);
+    let truckName ="";
+    if(result.truckTail==="")
+      truckName = result.truckHead;
+    else
+      truckName = `${result.truckHead} / ${result.truckTail}`;
+
     const body = {
       sealTotal: this.txtSealTotal,
-      sealTotalExtra: this.txtSealExtraTotal,
-      truckId: result._id,
-      truckLicense: `${result.truckIdHead}/${result.truckIdTail}`,
-      sealItem: this.itemSealOutList,
-      sealItemExtra: this.sealItemExtra,
+      truckId: result.truckId,
+      truckName:truckName,
+      sealOutInfo: this.itemSealOutList,
+      createdBy:"System",
+      updatedBy:"System",
     };
     this.service.addSealOut(JSON.stringify(body)).subscribe(
       (res: any) => {
         this.spinner.hide();
         this.swal.showDialog("success", "เพิ่มข้อมูลสำเร็จแล้ว");
         this.showRecript(res);
-        this.router.navigate(['/seals/sealoutlist']);
+        this.router.navigate(["/seals/sealoutlist"]);
       },
       (error: any) => {
         this.spinner.hide();
@@ -398,8 +407,8 @@ export class SealoutComponent implements OnInit {
     modalRef.componentInstance.data = item;
   }
   ngOnInit(): void {
-    this.getSealNo();
-    this.getTrucks();
+    this.getSeaBetWeen();
+    this.getTruck();
     this.bindData();
   }
 }

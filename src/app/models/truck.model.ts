@@ -1,6 +1,9 @@
 export interface Truck {
-  _id :string;
-  id :string;
-  truckIdHead: string;
-  truckIdTail: string;
+  truckId :string;
+  truckHead: string;
+  truckTail: string;
+  sealTotal: string;
+  isActive: boolean;
+  created:Date;
+  Updated: Date;
 }
