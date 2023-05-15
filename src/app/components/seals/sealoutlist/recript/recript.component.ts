@@ -28,7 +28,7 @@ export class RecriptComponent implements OnInit {
   }
   getData() {
     this.service.getSealOutById(this.id).subscribe((res: any) => {
-      this.data = res;
+      this.data = res.result;
     });
     this.service.getReportReceipt(this.id).subscribe((res: any) => {
      const pdfBlob = new Blob([res], { type: 'application/pdf' });
