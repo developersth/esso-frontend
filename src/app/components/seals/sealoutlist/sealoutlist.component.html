@@ -23,17 +23,35 @@
         <div class="card-content">
           <div class="card-body">
             <div class="form-row mb-2">
-              <div class="form-group col-md-2">
+              <div class="form-group col-md-1">
                 <label>แสดง:</label>
                 <select class="form-control" [(ngModel)]="pageSize">
                   <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
+                </select>
+              </div>
+              <div class="form-group col-md-2">
+                <label>สถานะ:</label>
+                <select class="form-control" [(ngModel)]="isCancel">
+                  <option value="">--ทั้งหมด--</option>
+                  <option value="0">จ่ายซีลแล้ว</option>
+                  <option value="1">ยกเลิก</option>
+                </select>
+              </div>
+              <div class="form-group col-md-2">
+                <label>ค้นหาจาก:</label>
+                <select class="form-control" [(ngModel)]="columnSearch">
+                  <option value="">--ไม่ระบุ--</option>
+                  <option value="id">รหัส</option>
+                  <option value="sealBetween">ช่วงหมายเลขซีล</option>
+                  <option value="sealNo">หมายเลขซีล</option>
+                  <option value="TruckName">ทะเบียนรถ</option>
                 </select>
               </div>
               <div class="form-group col-md-3">
                 <label> ฟิลเตอร์</label>
                 <fieldset>
                   <div class="input-group">
-                    <input type="text" class="form-control"  [(ngModel)]="searchTerm" placeholder="ค้นหาข้อมูลในตาราง">
+                    <input type="text" class="form-control" [(ngModel)]="searchTerm" placeholder="ค้นหาข้อมูลในตาราง">
                     <div class="input-group-append">
                       <button class="btn btn-danger" (click)="clearTextSearch()">
                         <i class="ft ft-x-square"></i>
@@ -42,7 +60,7 @@
                   </div>
                 </fieldset>
               </div>
-              <div class="form-group col-md-3">
+              <div class="form-group col-md-2">
                 <label for="form-action-3">จากวันที่</label>
                 <div class="form-inline">
                   <div class="input-group" style="width: 100%;">
@@ -64,7 +82,7 @@
                   </div>
                 </div>
               </div>
-              <div class="form-group col-md-3">
+              <div class="form-group col-md-2">
                 <label for="form-action-4">ถึงวันที่</label>
                 <div class="form-inline">
                   <div class="input-group" style="width: 100%;">
@@ -87,7 +105,6 @@
                   </div>
                 </div>
               </div>
-
             </div>
             <div class="table-responsive">
               <table class="table table-bordered table-strip table-hover">
@@ -97,8 +114,6 @@
                       <input type="checkbox" [(ngModel)]="checkedAll" (change)="checkAllItems()">
                     </th>
                     <th>รหัส</th>
-                    <th>หมายเลขซีล</th>
-                    <th>ซีลพิเศษ</th>
                     <th>จำนวนซีล</th>
                     <th>ทะเบียนรถ</th>
                     <th>วันที่/เวลา</th>
@@ -106,28 +121,15 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let item of filterItems | paginate: { itemsPerPage: pageSize, currentPage: currentPage }">
+                  <tr *ngFor="let item of sealItem | paginate: { itemsPerPage: pageSize, currentPage: currentPage }">
                     <td>
                       <ng-container>
                         <input type="checkbox" [(ngModel)]="item.checked">
                       </ng-container>
                     </td>
-                    <td>{{ item._id }}</td>
-                    <td>
-                      <div *ngFor="let sealItem of item['sealItem']">
-                        <p>{{sealItem['sealBetween']}} <span class="badge">{{sealItem['pack']}}</span></p>
-                        <!-- <div *ngFor="let item of sealItem['sealNoItem']">
-                          {{item.sealNo}}
-                        </div> -->
-                      </div>
-                    </td>
-                    <td>
-                      <div *ngFor="let sealItemExtra of item['sealItemExtra']">
-                        <p>{{ sealItemExtra['sealNo']}} </p>
-                      </div>
-                    </td>
+                    <td>{{ item.id }}</td>
                     <td>{{ item.sealTotal }}</td>
-                    <td>{{ item.truckLicense }}</td>
+                    <td>{{ item.truckName }}</td>
                     <td>{{ item.createAtStr }}</td>
                     <td>
                       <button class="btn btn-info" (click)="printSlip(item)"><i class="ft ft-printer"></i></button>

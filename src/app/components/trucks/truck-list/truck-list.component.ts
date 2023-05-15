@@ -16,7 +16,11 @@ import * as swalFunctions from "../../../shared/services/sweetalert.service";
 export class TruckListComponent implements OnInit {
   truck: Truck[];
   swal = swalFunctions;
-
+  pageSize:number =10;
+  pageSizes = [10, 20, 50, 100];
+  currentPage = 1;
+  filterItems:Truck[] = [];
+  searchTerm:string = "";
   constructor(
     private service: RestService,
     private modalService: NgbModal,
@@ -26,10 +30,36 @@ export class TruckListComponent implements OnInit {
   ngOnInit(): void {
     this.getTrucks();
   }
-
+  searchItem() {
+    this.currentPage = 1; // รีเซ็ตหน้าเป็นหน้าที่ 1 เมื่อทำการกรองข้อมูล
+    this.searchTerm = this.searchTerm.trim().toLowerCase();
+    if (this.searchTerm === "") {
+      // กรณีไม่มีคำค้นหา ให้แสดงข้อมูลทั้งหมด
+      this.filterItems = this.truck;
+    } else {
+      // กรณีมีคำค้นหา ให้กรองข้อมูลตามคำค้นหา
+      this.filterItems = this.truck.filter(
+        (item) =>
+          item.truckId.toString().includes(this.searchTerm) ||
+          item.truckHead
+            .toString()
+            .toLowerCase()
+            .includes(this.searchTerm) ||
+          item.truckTail
+            .toString()
+            .toLowerCase()
+            .includes(this.searchTerm)
+      );
+    }
+  }
+  clearTextSearch() {
+    this.searchTerm = "";
+    this.getTrucks();
+  }
   getTrucks() {
     this.service.getTruck().subscribe((res: any) => {
       this.truck = res.result;
+      this.searchItem();
     });
   }
   deleteTruck(id: string) {

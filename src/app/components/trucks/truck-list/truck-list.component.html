@@ -22,6 +22,31 @@
 
         <div class="card-content">
           <div class="card-body">
+            <div class="row">
+              <div class="form-group col-md-2">
+                <label>แสดง:</label>
+                <select class="form-control" [(ngModel)]="pageSize">
+                  <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
+                </select>
+              </div>
+              <div class="form-group col-md-6">
+                <label> ฟิลเตอร์</label>
+                <fieldset>
+                  <div class="form-inline">
+                    <div class="input-group">
+                      <input type="text" class="form-control"  [(ngModel)]="searchTerm"  placeholder="ค้นหาข้อมูลในตาราง">
+                      <div class="input-group-append">
+                        <button class="btn btn-danger" (click)="clearTextSearch()">
+                          <i class="ft ft-x-square"></i>
+                        </button>
+                      </div>
+                      <button (click)="getTrucks()" class="btn btn-primary">ค้นหา </button>
+                    </div>
+
+                  </div>
+                </fieldset>
+              </div>
+            </div>
             <div class="table-responsive">
               <table class="table table-bordered table-strip">
                 <thead>
@@ -34,7 +59,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let item of truck">
+                  <tr *ngFor="let item of filterItems| paginate: { itemsPerPage: pageSize, currentPage: currentPage }">
                     <td>{{ item.truckId }}</td>
                     <td>{{ item.truckHead }}</td>
                     <td>{{ item.truckTail }}</td>
@@ -50,6 +75,7 @@
                   </tr>
                 </tbody>
               </table>
+              <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
             </div>
           </div>
         </div>

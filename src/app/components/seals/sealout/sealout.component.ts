@@ -134,9 +134,10 @@ export class SealoutComponent implements OnInit {
         return;
       }
       this.itemSealOutList.push({
-        id: result.id,
+        sealInId: result.id,
         sealBetween: result.sealBetween,
         pack: result.pack,
+        sealtype: 1,
         sealtypeName: "ปกติ",
       });
     } else {
@@ -146,9 +147,10 @@ export class SealoutComponent implements OnInit {
   }
   addListSealExtra() {
     this.itemSealOutList.push({
-      id: 0,
+      sealInId: 0,
       sealBetween: "",
       pack: 1,
+      sealtype: 2,
       sealtypeName: "พิเศษ",
     });
   }
@@ -220,7 +222,7 @@ export class SealoutComponent implements OnInit {
     //seal extra
     let vCountExtra: number = 0;
     const filterSealExtra = this.itemSealOutList.filter(
-      (obj) => obj.sealtypeName === "พิเศษ"
+      (obj) => obj.sealtype === 2
     );
     filterSealExtra.forEach((el) => {
       vCountExtra = vCountExtra + el.pack;
@@ -370,19 +372,17 @@ export class SealoutComponent implements OnInit {
     });
 
     const result = this.mTruck.find((item) => item.truckId === this.txtTruckId);
-    let truckName ="";
-    if(result.truckTail==="")
-      truckName = result.truckHead;
-    else
-      truckName = `${result.truckHead} / ${result.truckTail}`;
+    let truckName = "";
+    if (result.truckTail === "") truckName = result.truckHead;
+    else truckName = `${result.truckHead} / ${result.truckTail}`;
 
     const body = {
       sealTotal: this.txtSealTotal,
       truckId: result.truckId,
-      truckName:truckName,
+      truckName: truckName,
       sealOutInfo: this.itemSealOutList,
-      createdBy:"System",
-      updatedBy:"System",
+      createdBy: "System",
+      updatedBy: "System",
     };
     this.service.addSealOut(JSON.stringify(body)).subscribe(
       (res: any) => {

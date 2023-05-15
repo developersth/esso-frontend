@@ -42,7 +42,7 @@
                 <select class="form-control" [(ngModel)]="columnSearch">
                   <option value="">--ไม่ระบุ--</option>
                   <option value="id">รหัส</option>
-                  <option value="sealBetweenn">ช่วงหมายเลขซีล</option>
+                  <option value="sealBetween">ช่วงหมายเลขซีล</option>
                   <option value="sealNo">หมายเลขซีล</option>
                   <option value="pack">แพ็ค</option>
                 </select>
@@ -137,8 +137,8 @@
                     </td>
                     <td>{{ item.pack }}</td>
                     <td>
-                      <span *ngIf="!item.isUsed" class="badge badge-success">ยังไม่ได้ใช้งาน</span>
-                      <span *ngIf="item.isUsed" class="badge badge-danger">ถูกใช้งาน</span>
+                      <span *ngIf="!item.isActive" class="badge badge-success">ยังไม่ได้ใช้งาน</span>
+                      <span *ngIf="item.isActive" class="badge badge-danger">ถูกใช้งาน</span>
                     </td>
                     <td>{{ item.created| date: 'yyyy-MM-dd HH:mm'}}</td>
                     <td>

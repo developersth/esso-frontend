@@ -55,39 +55,10 @@ export class SealOutListComponent implements OnInit {
   sealItem: SealOut[] = [];
   filterItems: SealOut[] = [];
   now:Date = new Date();
+  columnSearch = "";
+  isCancel:string = "";
   pageChanged(event: any): void {
     this.page = event.page;
-  }
-  searchItem() {
-    this.page = 1; // รีเซ็ตหน้าเป็นหน้าที่ 1 เมื่อทำการกรองข้อมูล
-    this.searchTerm = this.searchTerm.trim().toLowerCase();
-    if (this.searchTerm === "") {
-      // กรณีไม่มีคำค้นหา ให้แสดงข้อมูลทั้งหมด
-      this.filterItems = this.sealItem;
-    } else {
-      // กรณีมีคำค้นหา ให้กรองข้อมูลตามคำค้นหา
-      this.filterItems = this.sealItem.filter(
-        (item) =>
-          item.id.increment.toString().includes(this.searchTerm) ||
-          item.truckLicense
-            .toString()
-            .toLowerCase()
-            .includes(this.searchTerm) ||
-          item.sealItem.some((seal) =>
-            seal.sealNo?.toLowerCase().includes(this.searchTerm)
-          ) ||
-          item.sealItem.some((seal) =>
-            seal.pack?.toString().includes(this.searchTerm)
-          ) ||
-          item.sealItem.some((seal) =>
-            seal.type?.toLowerCase().includes(this.searchTerm)
-          )
-        // item.sealItem.pack.toString().includes(this.searchTerm.toLowerCase()) ||
-        // item.sealItem.type.toString().includes(this.searchTerm.toLowerCase())||
-        // item.sealTotal.toString().includes(this.searchTerm.toLowerCase())||
-        // item.sealTotalExtra.toString().includes(this.searchTerm.toLowerCase())
-      );
-    }
   }
   clearTextSearch() {
     this.searchTerm = "";
@@ -139,19 +110,12 @@ export class SealOutListComponent implements OnInit {
   }
 
   getSeal() {
-    let startDate = new Date(
-      this.dtStart.year,
-      this.dtStart.month - 1,
-      this.dtStart.day
-    );
-    let endDate = new Date(
-      this.dtEnd.year,
-      this.dtEnd.month - 1,
-      this.dtEnd.day
-    );
-    this.service.getSealOutAll(startDate, endDate).subscribe((res: any) => {
-      this.sealItem = res;
-      this.searchItem();
+    let startDate: string = `${this.dtStart.year}-${this.dtStart.month}-${this.dtStart.day}`;
+    let endDate: string = `${this.dtEnd.year}-${this.dtEnd.month}-${this.dtEnd.day}`;
+    this.service
+      .getSealOutAll(this.isCancel,this.columnSearch, this.searchTerm, startDate, endDate).subscribe((res: any) => {
+      this.sealItem = res.result;
+      console.log(this.sealItem);
     });
   }
 

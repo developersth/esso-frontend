@@ -18,8 +18,8 @@ export class RestService {
   constructor(private http: HttpClient) {}
   private readonly apiUrl = `${environment.apiUrl}`;
   private httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/pdf' }),
-    responseType: 'arraybuffer' as 'json'
+    headers: new HttpHeaders({ "Content-Type": "application/pdf" }),
+    responseType: "arraybuffer" as "json",
   };
   //----------------------------------------------------------------
   private sealInUrl = `${this.apiUrl}/sealin`;
@@ -54,7 +54,7 @@ export class RestService {
   addTruck(truck: Truck): Observable<Response> {
     return this.http.post<Response>(`${this.truckUrl}`, truck);
   }
-  updateTruck(id:string,truck:Truck): Observable<Truck> {
+  updateTruck(id: string, truck: Truck): Observable<Truck> {
     return this.http.put<Truck>(`${this.truckUrl}/${id}`, truck);
   }
   deleteTruck(id: string): Observable<any> {
@@ -65,12 +65,23 @@ export class RestService {
     let item = JSON.stringify(items);
     return this.http.post<any>(`${this.sealInUrl}`, item, { headers });
   }
-  getSeal(isActive:string,columnSearch:string,searchTerm:string,startDate: string, endDate: string): Observable<any> {
+  getSeal(
+    isActive: string,
+    columnSearch: string,
+    searchTerm: string,
+    startDate: string,
+    endDate: string
+  ): Observable<any> {
     const body = { startDate: startDate, endDate: endDate };
-    return this.http.get<any[]>(`${this.sealInUrl}?pIsActive=${isActive}&pColumnSearch=${columnSearch}&searchTerm=${searchTerm}&pStartDate=${startDate}&pEndDate=${endDate}`,{headers});
+    return this.http.get<any[]>(
+      `${this.sealInUrl}?pIsActive=${isActive}&pColumnSearch=${columnSearch}&searchTerm=${searchTerm}&pStartDate=${startDate}&pEndDate=${endDate}`,
+      { headers }
+    );
   }
   getSeaBetWeen(): Observable<any> {
-    return this.http.get<any[]>(`${this.sealInUrl}/GetSealBetWeen`, { headers });
+    return this.http.get<any[]>(`${this.sealInUrl}/GetSealBetWeen`, {
+      headers,
+    });
   }
   deleteSeal(id: string): Observable<any> {
     return this.http.delete<any[]>(`${this.sealInUrl}/${id}`, { headers });
@@ -80,8 +91,10 @@ export class RestService {
     return forkJoin(deleteRequests);
   }
   //----------------------------------------------------------------
-  getSealItemBySealInId(id:string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.sealItemUrl}/BySealInId/${id}`, { headers });
+  getSealItemBySealInId(id: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.sealItemUrl}/BySealInId/${id}`, {
+      headers,
+    });
   }
   //----------------------------------------------------------------
   deleteSealOut(id: string): Observable<any> {
@@ -92,7 +105,7 @@ export class RestService {
       headers,
     });
   }
-  updateSealOut(id: string,item: any): Observable<any> {
+  updateSealOut(id: string, item: any): Observable<any> {
     return this.http.put<any>(`${this.sealOutUrl}/${id}`, item, {
       headers,
     });
@@ -101,12 +114,21 @@ export class RestService {
     return this.http.get<any[]>(`${this.sealOutUrl}/${id}`, { headers });
   }
   getReportReceipt(id: string): Observable<any> {
-    return this.http.get<any[]>(`${this.sealOutUrl}/showreceipt`,{headers});
+    return this.http.get<any[]>(`${this.sealOutUrl}/showreceipt`, { headers });
   }
-  getSealOutAll(startDate: Date, endDate: Date): Observable<any> {
+  getSealOutAll(
+    isCancel: string,
+    columnSearch: string,
+    searchTerm: string,
+    startDate: string,
+    endDate: string
+  ): Observable<any> {
     const body = { startDate: startDate, endDate: endDate };
-    return this.http.post<any[]>(`${this.sealOutUrl}/findall`, body, {
-      headers,
-    });
+    return this.http.get<any[]>(
+      `${this.sealOutUrl}?pIsActive=${isCancel}&pColumnSearch=${columnSearch}&searchTerm=${searchTerm}&pStartDate=${startDate}&pEndDate=${endDate}`,
+      {
+        headers,
+      }
+    );
   }
 }
